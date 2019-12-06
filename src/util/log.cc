@@ -24,6 +24,8 @@
 #include <fmt/chrono.h>
 #elif FMT_VERSION >= 50000
 #include <fmt/time.h>
+#else
+#error "fmt lib version >= 5.0 is required"
 #endif
 
 #include <seastar/util/log.hh>
