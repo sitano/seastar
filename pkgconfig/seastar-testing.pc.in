@@ -9,7 +9,7 @@ Version: @PROJECT_VERSION@
 
 # Dependencies.
 boost_cflags=-I$<JOIN:@Boost_INCLUDE_DIRS@, -I>
-boost_unit_test_libs=@Boost_UNIT_TEST_FRAMEWORK_LIBRARY@
+boost_unit_test_libs=$<$<BOOL:@Boost_UNIT_TEST_FRAMEWORK_LIBRARY@>:-l$<TARGET_LINKER_FILE:@Boost_UNIT_TEST_FRAMEWORK_LIBRARY@>>
 
 # Us.
 seastar_testing_cflags=-DBoost_TEST_DYN_LINK

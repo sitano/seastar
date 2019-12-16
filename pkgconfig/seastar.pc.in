@@ -15,13 +15,13 @@ dl_libs=-l$<JOIN:@CMAKE_DL_LIBS@,-l>
 rt_libs=$<JOIN:@rt_LIBRARIES@, >
 
 # Dependencies of dependencies.
-boost_system_libs=@Boost_SYSTEM_LIBRARY@
+boost_system_libs=$<$<BOOL:@Boost_SYSTEM_LIBRARY@>:-l$<TARGET_LINKER_FILE:@Boost_SYSTEM_LIBRARY@>>
 
 # Dependencies.
 boost_cflags=-I$<JOIN:@Boost_INCLUDE_DIRS@, -I>
-boost_filesystem_libs=@Boost_FILESYSTEM_LIBRARY@
-boost_program_options_libs=@Boost_PROGRAM_OPTIONS_LIBRARY@
-boost_thread_libs=${boost_system_libs} @Boost_THREAD_LIBRARY@
+boost_filesystem_libs=$<$<BOOL:@Boost_FILESYSTEM_LIBRARY@>:-l$<TARGET_LINKER_FILE:@Boost_FILESYSTEM_LIBRARY@>>
+boost_program_options_libs=$<$<BOOL:@Boost_PROGRAM_OPTIONS_LIBRARY@>:-l$<TARGET_LINKER_FILE:@Boost_PROGRAM_OPTIONS_LIBRARY@>>
+boost_thread_libs=${boost_system_libs} $<$<BOOL:@Boost_THREAD_LIBRARY@>:-l$<TARGET_LINKER_FILE:@Boost_THREAD_LIBRARY@>>
 c_ares_cflags=-I$<JOIN:@c-ares_INCLUDE_DIRS@, -I>
 c_ares_libs=$<JOIN:@c-ares_LIBRARIES@, >
 cryptopp_cflags=-I$<JOIN:@cryptopp_INCLUDE_DIRS@, -I>
