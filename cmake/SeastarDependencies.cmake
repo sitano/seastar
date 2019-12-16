@@ -28,6 +28,9 @@
 # The "real" FIND_PACKAGE invocation for Boost is inside SEASTAR_FIND_DEPENDENCIES.
 #
 
+# Be consistent in results from FindBoost.cmake
+set (Boost_NO_BOOST_CMAKE ON)
+
 # This is the minimum version of Boost we need the CMake-bundled `FindBoost.cmake` to know about.
 find_package (Boost 1.64 MODULE QUIET COMPONENTS filesystem)
 
@@ -100,4 +103,31 @@ macro (seastar_find_dependencies)
   foreach (third_party ${_seastar_all_dependencies})
     find_package ("${third_party}" ${_seastar_dep_args_${third_party}})
   endforeach ()
+
+  # Setup Boost_{component}_LIBRARY
+  # This required because cmake-boost may return:
+  # - /usr/lib64/libboost_filesystem.so
+  # - Boost::filesystem
+  # And no cmake boost may return:
+  # - optimized;/usr/lib64/libboost_filesystem.so.1.71.0;debug;/usr/lib64/libboost_filesystem.so
+  get_cmake_property(_variableNames VARIABLES)
+  foreach (var ${_variableNames})
+    if ("${var}" MATCHES "^Boost_.*_LIBRARY$")
+      list(LENGTH ${var} _len)
+      # if Boost_{component}_LIBRARY is a list
+      if (${_len} GREATER 1)
+        if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+          if (${var}_DEBUG)
+            # set Boost_{component}_LIBRARY = Boost_{component}_LIBRARY_DEBUG
+            set(${var} ${${var}_DEBUG})
+          endif()
+        else()
+          if (${var}_RELEASE)
+            # set Boost_{component}_LIBRARY = Boost_{component}_LIBRARY_RELEASE
+            set(${var} ${${var}_RELEASE})
+          endif()
+        endif()
+      endif()
+    endif ()
+  endforeach()
 endmacro ()
