@@ -177,7 +177,11 @@ def configure_mode(mode):
 
     LDFLAGS = seastar_cmake.convert_strings_to_cmake_list(args.user_ldflags)
 
-    TRANSLATED_ARGS = [
+    TRANSLATED_ARGS = list(map(lambda id: "-D" + id + "=" + os.environ[id],
+                               filter(lambda x: str(x).startswith("BOOST_") or str(x).startswith("CMAKE_"),
+                                      os.environ)))
+
+    TRANSLATED_ARGS += [
         '-DCMAKE_BUILD_TYPE={}'.format(MODE_TO_CMAKE_BUILD_TYPE[mode]),
         '-DCMAKE_C_COMPILER={}'.format(args.cc),
         '-DCMAKE_CXX_COMPILER={}'.format(args.cxx),
