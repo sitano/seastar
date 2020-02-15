@@ -272,7 +272,7 @@ int main(int ac, char** av) {
             });
             myrpc.register_handler(10, [] {
                 fmt::print("test 10\n");
-                return make_ready_future<long, int>(1, 2);
+                return make_ready_future<rpc::tuple<long, int>>(rpc::tuple<long, int>(1, 2));
             });
             myrpc.register_handler(11, [] {
                 fmt::print("test 11\n");
